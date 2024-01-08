@@ -1,6 +1,10 @@
+<script setup>
+import AudioDemo from '../components/AudioDemo.vue'
+</script>
+
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <AudioDemo />
   </div>
 </template>
 

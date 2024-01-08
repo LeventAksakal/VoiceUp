@@ -1,11 +1,17 @@
-const express = require('express');
+const http = require("http");
+const socketIO = require("socket.io");
+const express = require("express");
 const app = express();
-const port = 3000;
-
-app.get('/', (req, res) => {
-  res.send('Hello, Express!');
+const server = http.createServer(app);
+const io = new socketIO.Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+io.on("connection", (socket) => {});
+
+server.listen(3000, () => {
+  console.log("Server is running on port 3000");
 });
