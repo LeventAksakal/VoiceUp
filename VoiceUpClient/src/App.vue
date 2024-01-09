@@ -1,14 +1,9 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import VideoDemo from './components/VideoDemo.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <VideoDemo />
-    </div>
-  </header>
+  <RouterView />
 </template>
 
 <style scoped></style>

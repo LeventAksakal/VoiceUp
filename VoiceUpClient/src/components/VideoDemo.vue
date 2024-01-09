@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
-import { socket, state } from '../VueSocket'
+import { socket, state } from '../socket.js'
 
 let video = null
 let videoStream = null
@@ -40,7 +40,7 @@ onMounted(() => {
     <h1 class="green"></h1>
     <h3>
       <video id="camera"></video>
-      
+
       <button v-if="toggle" @click="playVideo">play</button>
       <button v-else @click="stopVideo">stop</button>
     </h3>

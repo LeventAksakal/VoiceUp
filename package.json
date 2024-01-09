@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "docker build -t voiceup .",
+    "tag": "node -e \"const v = process.argv[3]; console.log('Tagging with version:', v); docker tag voiceup leventaksakal/voiceup:voiceupv${v}\"",
+    "push": "docker push leventaksakal/voiceup:voiceupv${process.env.npm_package_config_v}"
+  },
+  "config": {
+    "v": "4"
+  }
+}

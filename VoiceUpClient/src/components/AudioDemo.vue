@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { socket, state } from '../VueSocket'
+import { onMounted } from 'vue'
+import { socket, state } from '../socket.js'
 
 const constraints = {
   video: false,
@@ -21,8 +21,6 @@ onMounted(() => {
 })
 </script>
 
-<template>
-  
-</template>
+<template></template>
 
 <style scoped></style>
