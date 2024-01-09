@@ -5,7 +5,7 @@
   <main>
     <div class="video-container">
       <div>
-        <video ref="localVideo" autoplay playsinline></video>
+        <video ref="localVideo" autoplay muted playsinline></video>
       </div>
       <div>
         <video ref="remoteVideo" autoplay playsinline></video>
@@ -26,108 +26,10 @@
     </div>
   </main>
 </template>
-
-<style scoped>
-main {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  background-color: #3d348b;
-  height: 90vh;
-  width: 100vw;
-  overflow: hidden;
-
-}
-
-h1 {
-  color: #f7b801;
-  margin-left: 55px;
-}
-
-.header {
-  height: 10vh;
-  width: 100vw;
-  display: flex;
-  align-items: left;
-  justify-content: center;
-  flex-direction: column;
-  background-color: #7678ed;
-
-}
-
-.video-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* Adjust column sizes as needed */
-  grid-gap: 10px;
-}
-
-video {
-  width: auto;
-  min-width: 350px;
-  min-height: 350px;
-  border: 5px solid #f18701;
-  border-radius: 2%;
-  background-image: url("camera-icon.jpg");
-  background-position: center;
-}
-
-.button-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* Adjust column sizes as needed */
-  grid-gap: 400px;
-}
-
-.func-button {
-  margin-left: 10px;
-  background: #7678ed;
-  border-radius: 999px;
-  box-sizing: border-box;
-  color: rgb(230, 232, 230);
-  cursor: pointer;
-  font-family: Inter, Helvetica, "Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols, -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 24px;
-  opacity: 1;
-  outline: 0 solid transparent;
-  padding: 8px 18px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  width: fit-content;
-  word-break: break-word;
-  border: 0;
-}
-
-.red-button {
-  margin-left: 10px;
-  background: #f7b801;
-  border-radius: 999px;
-  box-sizing: border-box;
-  color: rgb(230, 232, 230);
-  cursor: pointer;
-  font-family: Inter, Helvetica, "Apple Color Emoji", "Segoe UI Emoji", NotoColorEmoji, "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", EmojiSymbols, -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 24px;
-  opacity: 1;
-  outline: 0 solid transparent;
-  padding: 8px 18px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  width: fit-content;
-  word-break: break-word;
-  border: 0;
-}
-</style>
-
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { socket, state } from '../socket.js'
+import router from '@/router'
 
 const isMuted = ref(false)
 const isCameraOn = ref(true)
@@ -174,7 +76,7 @@ const skip = () => {
 }
 
 const leave = () => {
-  socket.emit('leave', state.room)
+  router.push('/')
 }
 onMounted(async () => {
   localVideo.value.focus()
@@ -195,8 +97,140 @@ onMounted(async () => {
 })
 onUnmounted(() => {
   state.rtcConnection.close()
+  socket.emit('leave', state.room)
+  state.rtcConnection = null
+  state.room = null
   if (stream) {
     stream.getTracks().forEach((track) => track.stop())
   }
 })
 </script>
+
+<style scoped>
+main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #3d348b;
+  height: 90vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+h1 {
+  color: #f7b801;
+  margin-left: 55px;
+  font-weight: bold;
+}
+
+.header {
+  height: 10vh;
+  width: 100vw;
+  display: flex;
+  align-items: left;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #7678ed;
+}
+
+.video-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Adjust column sizes as needed */
+  grid-gap: 10px;
+}
+
+video {
+  width: auto;
+  min-width: 350px;
+  min-height: 350px;
+  border: 5px solid #f18701;
+  border-radius: 2%;
+  background-image: url('../assets/camera-icon.jpg');
+  background-position: center;
+  transform: scaleX(-1);
+}
+
+.button-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 400px;
+}
+
+.func-button {
+  margin-left: 10px;
+  background: #7678ed;
+  border-radius: 999px;
+  box-sizing: border-box;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  font-family:
+    Inter,
+    Helvetica,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    NotoColorEmoji,
+    'Noto Color Emoji',
+    'Segoe UI Symbol',
+    'Android Emoji',
+    EmojiSymbols,
+    -apple-system,
+    system-ui,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    'Noto Sans',
+    sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  opacity: 1;
+  outline: 0 solid transparent;
+  padding: 8px 18px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: fit-content;
+  word-break: break-word;
+  border: 3px solid rgb(230, 232, 230);
+}
+
+.red-button {
+  margin-left: 10px;
+  background: #f7b801;
+  border-radius: 999px;
+  box-sizing: border-box;
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  font-family:
+    Inter,
+    Helvetica,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    NotoColorEmoji,
+    'Noto Color Emoji',
+    'Segoe UI Symbol',
+    'Android Emoji',
+    EmojiSymbols,
+    -apple-system,
+    system-ui,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    'Noto Sans',
+    sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  opacity: 1;
+  outline: 0 solid transparent;
+  padding: 8px 18px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: fit-content;
+  word-break: break-word;
+  border: 3px solid rgb(230, 232, 230);
+}
+</style>

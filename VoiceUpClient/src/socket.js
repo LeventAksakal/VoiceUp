@@ -32,7 +32,8 @@ const iceConfig = {
 
 export const state = reactive({
   room: null,
-  rtcConnection: new RTCPeerConnection(iceConfig)
+  rtcConnection: new RTCPeerConnection(iceConfig),
+  userCount: 0
 })
 
 export const socket = io()
@@ -59,6 +60,7 @@ socket.on('offer', async (offer) => {
 })
 
 socket.on('video-offer', async (room) => {
+  // state.rtcConnection = new RTCPeerConnection(iceConfig)
   state.room = room
   const offer = await state.rtcConnection.createOffer()
   await state.rtcConnection.setLocalDescription(offer)
@@ -67,6 +69,7 @@ socket.on('video-offer', async (room) => {
 })
 
 socket.on('video-answer', (room) => {
+  // state.rtcConnection = new RTCPeerConnection(iceConfig)
   state.room = room
   router.push({ name: 'room', params: { room } })
 })
@@ -76,11 +79,14 @@ socket.on('skip', () => {
   state.room = null
   state.rtcConnection = new RTCPeerConnection(iceConfig)
   socket.emit('video-request')
+  router.push({ name: 'home' })
 })
 
-socket.on('leave', () => {
+socket.on('refresh-rtc', () => {
   state.rtcConnection.close()
-  state.room = null
   state.rtcConnection = new RTCPeerConnection(iceConfig)
-  router.push({ name: 'home' })
+})
+
+socket.on('user-count', (userCount) => {
+  state.userCount = userCount
 })

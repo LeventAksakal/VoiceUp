@@ -54,10 +54,13 @@ io.use((socket, next) => {
   }
 });
 
+let userCount = 0;
 const queue = [];
 const rooms = {};
 
 io.on("connection", (socket) => {
+  userCount++;
+  socket.emit("user-count", userCount);
   socket.on("video-request", () => {
     if (queue.find((s) => s === socket)) return;
     if (queue.length > 0) {
@@ -87,7 +90,7 @@ io.on("connection", (socket) => {
       queue.splice(i, 1);
     }
     socket.to(room).emit("skip");
-    io.to(socket.id).emit("leave");
+    io.to(socket.id).emit("refresh-rtc");
     if (rooms[room]) {
       rooms[room].forEach((s) => {
         s.leave(room);
@@ -105,6 +108,7 @@ io.on("connection", (socket) => {
     }
   });
   socket.on("disconnect", () => {
+    userCount--;
     let i = queue.indexOf(socket);
     if (i !== -1) {
       queue.splice(i, 1);
@@ -112,10 +116,10 @@ io.on("connection", (socket) => {
   });
 });
 
-setInterval(() => {
-  console.log("queue", queue);
-  console.log("rooms", rooms);
-}, 5000);
+// setInterval(() => {
+//   console.log("queue", queue);
+//   console.log("rooms", rooms);
+// }, 5000);
 
 const port = 3000;
 server.listen(port, () => {
