@@ -81,7 +81,41 @@ io.on("connection", (socket) => {
   socket.on("candidate", (candidate, room) => {
     socket.to(room).emit("candidate", candidate);
   });
+  socket.on("leave", (room) => {
+    let i = queue.indexOf(socket);
+    if (i !== -1) {
+      queue.splice(i, 1);
+    }
+    socket.to(room).emit("skip");
+    io.to(socket.id).emit("leave");
+    if (rooms[room]) {
+      rooms[room].forEach((s) => {
+        s.leave(room);
+      });
+      delete rooms[room];
+    }
+  });
+  socket.on("skip", (room) => {
+    io.to(room).emit("skip");
+    if (rooms[room]) {
+      rooms[room].forEach((s) => {
+        s.leave(room);
+      });
+      delete rooms[room];
+    }
+  });
+  socket.on("disconnect", () => {
+    let i = queue.indexOf(socket);
+    if (i !== -1) {
+      queue.splice(i, 1);
+    }
+  });
 });
+
+setInterval(() => {
+  console.log("queue", queue);
+  console.log("rooms", rooms);
+}, 5000);
 
 const port = 3000;
 server.listen(port, () => {

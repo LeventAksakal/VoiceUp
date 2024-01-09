@@ -5,6 +5,7 @@
         ref="localVideo"
         autoplay
         playsinline
+        muted
         class="absolute top-0 left-0 w-full h-full object-cover transform scale-y-1"
       ></video>
     </div>
@@ -35,7 +36,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { socket, state } from '../socket.js'
 
-const isMuted = ref(true)
+const isMuted = ref(false)
 const isCameraOn = ref(true)
 const localVideo = ref(null)
 const remoteVideo = ref(null)
@@ -76,21 +77,27 @@ const updateStream = async () => {
 }
 
 const skip = () => {
-  // TODO: Implement skip functionality
-  socket.emit('skip')
+  socket.emit('skip', state.room)
 }
 
 const leave = () => {
-  // TODO: Implement leave functionality
-  socket.emit('leave')
+  socket.emit('leave', state.room)
 }
 onMounted(async () => {
   localVideo.value.focus()
   remoteVideo.value.focus()
   updateStream()
   state.rtcConnection.ontrack = (event) => {
-    console.log('track added')
     remoteVideo.value.srcObject = event.streams[0]
+
+    event.streams[0].getVideoTracks()[0].onunmute = () => {
+      placeholder.value.classList.add('hidden')
+      remoteVideo.value.classList.remove('hidden')
+    }
+    event.streams[0].getVideoTracks()[0].onmute = () => {
+      placeholder.value.classList.remove('hidden')
+      remoteVideo.value.classList.add('hidden')
+    }
   }
 })
 onUnmounted(() => {
